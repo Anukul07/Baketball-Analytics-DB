@@ -55,6 +55,121 @@ def init_database():
             conn.close()
             print("Database connection closed.")
 
+# ... (at the end of src/database.py) ...
+
+def get_or_create_team(conn, team_name, team_abbr, is_playoff=False):
+    """
+    Finds a team by abbreviation. If it doesn't exist, creates it.
+    Returns the team's primary key (team_id).
+    """
+    with conn.cursor() as cursor:
+        # Check if team exists
+        cursor.execute("SELECT team_id FROM teams WHERE team_abbreviation = %s", (team_abbr,))
+        result = cursor.fetchone()
+        
+        if result:
+            # Team exists, return its ID
+            return result[0]
+        else:
+            # Team doesn't exist, create it
+            print(f"    Adding new team to DB: {team_name}")
+            cursor.execute(
+                """
+                INSERT INTO teams (team_name, team_abbreviation, is_playoff_team) 
+                VALUES (%s, %s, %s) 
+                RETURNING team_id
+                """,
+                (team_name, team_abbr, is_playoff)
+            )
+            team_id = cursor.fetchone()[0]
+            conn.commit() # Commit the new team
+            return team_id
+
+def get_or_create_player(conn, player_name, position, team_id):
+    """
+    Finds a player by name and team. If they don't exist, creates them.
+    Returns the player's primary key (player_id).
+    """
+    with conn.cursor() as cursor:
+        # Check if player exists on this team
+        cursor.execute("SELECT player_id FROM players WHERE player_name = %s AND team_id = %s", (player_name, team_id))
+        result = cursor.fetchone()
+        
+        if result:
+            # Player exists, return their ID
+            return result[0]
+        else:
+            # Player doesn't exist, create them
+            print(f"      Adding new player to DB: {player_name}")
+            cursor.execute(
+                """
+                INSERT INTO players (player_name, position, team_id) 
+                VALUES (%s, %s, %s) 
+                RETURNING player_id
+                """,
+                (player_name, position, team_id)
+            )
+            player_id = cursor.fetchone()[0]
+            conn.commit() # Commit the new player
+            return player_id
+        
+# ... (at the end of src/database.py, after get_or_create_player) ...
+
+def add_regular_season_stats(conn, player_id, season_year, stats_dict):
+    """
+    Adds a player's regular season stats to the database.
+    Uses ON CONFLICT to avoid duplicates if run multiple times.
+    """
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute(
+                """
+                INSERT INTO regular_season_stats (
+                    player_id, season_year, avg_points, avg_assists, 
+                    avg_offensive_rebounds, avg_defensive_rebounds, 
+                    avg_steals, avg_blocks
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (player_id, season_year) DO NOTHING;
+                """,
+                (
+                    player_id, season_year, stats_dict['points'], stats_dict['assists'],
+                    stats_dict['offensive_rebounds'], stats_dict['defensive_rebounds'],
+                    stats_dict['steals'], stats_dict['blocks']
+                )
+            )
+        except Exception as e:
+            print(f"    Error inserting reg stats for player_id {player_id}: {e}")
+            conn.rollback()
+
+
+def add_playoff_stats(conn, player_id, season_year, stats_dict):
+    """
+    Adds a player's playoff stats to the database.
+    Uses ON CONFLICT to avoid duplicates.
+    """
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute(
+                """
+                INSERT INTO playoff_stats (
+                    player_id, season_year, avg_points, avg_assists, 
+                    avg_offensive_rebounds, avg_defensive_rebounds, 
+                    avg_steals, avg_blocks
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (player_id, season_year) DO NOTHING;
+                """,
+                (
+                    player_id, season_year, stats_dict['points'], stats_dict['assists'],
+                    stats_dict['offensive_rebounds'], stats_dict['defensive_rebounds'],
+                    stats_dict['steals'], stats_dict['blocks']
+                )
+            )
+        except Exception as e:
+            print(f"    Error inserting playoff stats for player_id {player_id}: {e}")
+            conn.rollback()
+                   
 if __name__ == "__main__":
     print("Running database initialization...")
     init_database()
