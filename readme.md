@@ -21,6 +21,8 @@ The final visualization plots every team's top player by their Offensive score (
 - Two-Way Stars: Players landing in the top-right quadrant (e.g., Nikola Jokić, Giannis Antetokounmpo) who are their team's best on both ends.
 - Offensive Specialists: Players in the top-left (e.g., Jalen Brunson) who excel offensively but are below average defensively for this elite group.
 - Defensive Specialists: Players in the bottom-right (e.g., Rudy Gobert, Anthony Davis) who anchor their team's defense.
+<img width="1339" height="1184" alt="image" src="https://github.com/user-attachments/assets/b0438c05-793a-4257-94c9-9ffd0aa1a978" />
+
 
 Also, to find the top offensive player and defensive player from each team, CTEs and Window functions (Rank() OVER (Partition BY...)) were used. CTEs were used in numerous scenarios too.
 
