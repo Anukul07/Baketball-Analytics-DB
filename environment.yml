@@ -13,6 +13,7 @@ dependencies:
   - bs4=4.13.5=py39hd3eb1b0_0
   - bzip2=1.0.8=h2bbff1b_6
   - ca-certificates=2025.9.9=haa95532_0
+  - cairo=1.18.4=he9e932c_0
   - certifi=2025.10.5=py312haa95532_0
   - cffi=2.0.0=py312h02ab6af_0
   - charset-normalizer=3.4.4=py312haa95532_0
@@ -25,8 +26,13 @@ dependencies:
   - decorator=5.2.1=py312haa95532_0
   - executing=2.2.1=py312haa95532_0
   - expat=2.7.1=h8ddb27b_0
+  - fontconfig=2.15.0=hd211d86_0
   - fonttools=4.60.1=py312h02ab6af_0
   - freetype=2.13.3=h0620614_0
+  - graphite2=1.3.14=hd77b12b_1
+  - greenlet=3.2.4=py312h885b0b7_0
+  - harfbuzz=10.2.0=he2f9f60_1
+  - icu=73.1=h6c2663c_0
   - idna=3.7=py312haa95532_0
   - intel-openmp=2025.0.0=haa95532_1164
   - ipykernel=6.30.1=py312haa95532_0
@@ -41,20 +47,26 @@ dependencies:
   - lerc=3.0=hd77b12b_0
   - libdeflate=1.17=h2bbff1b_1
   - libffi=3.4.4=hd77b12b_1
+  - libglib=2.84.4=hfaec014_0
+  - libiconv=1.16=h2bbff1b_3
   - libkrb5=1.21.3=h885b0b7_4
   - libpng=1.6.50=h46444df_0
   - libpq=17.6=h652a1e2_0
   - libsodium=1.0.20=h83e8143_0
   - libtiff=4.5.1=hd77b12b_0
   - libwebp-base=1.3.2=h3d04722_1
+  - libxml2=2.13.9=h6201b9f_0
   - libzlib=1.3.1=h02ab6af_0
   - lz4-c=1.9.4=h2bbff1b_1
+  - matplotlib=3.10.6=py312haa95532_0
   - matplotlib-base=3.10.6=py312h43afe63_0
   - matplotlib-inline=0.1.7=py312haa95532_0
   - mkl=2025.0.0=h5da7b33_930
   - mkl-service=2.5.2=py312h0b37514_0
   - mkl_fft=2.1.1=py312h300f80d_0
   - mkl_random=1.3.0=py312ha5e6156_0
+  - mysql-common=9.3.0=hf582a5b_3
+  - mysql-libs=9.3.0=hc0ebf12_3
   - nest-asyncio=1.6.0=py312haa95532_0
   - numexpr=2.11.0=py312ha02bb35_1
   - numpy=2.3.3=py312hc2e1e29_1
@@ -64,8 +76,10 @@ dependencies:
   - packaging=25.0=py312haa95532_1
   - pandas=2.3.3=py312ha5e6156_0
   - parso=0.8.4=py312haa95532_0
+  - pcre2=10.46=h5740b90_0
   - pillow=11.1.0=py312h096bfcc_0
   - pip=25.2=pyhc872135_1
+  - pixman=0.46.4=h4043f72_0
   - platformdirs=4.3.7=py312haa95532_0
   - prompt-toolkit=3.0.52=py312haa95532_1
   - prompt_toolkit=3.0.52=hd3eb1b0_1
@@ -75,6 +89,8 @@ dependencies:
   - pycparser=2.23=py312haa95532_0
   - pygments=2.19.1=py312haa95532_0
   - pyparsing=3.2.0=py312haa95532_0
+  - pyqt=6.9.1=py312h12ec796_0
+  - pyqt6-sip=13.10.2=py312h630b2a1_0
   - pysocks=1.7.1=py312haa95532_1
   - python=3.12.0=h1d929f7_0
   - python-dateutil=2.9.0post0=py312haa95532_2
@@ -83,11 +99,19 @@ dependencies:
   - pytz=2025.2=py312haa95532_0
   - pywin32=311=py312h885b0b7_0
   - pyzmq=27.1.0=py312h7149c55_0
+  - qtbase=6.9.2=hd965823_2
+  - qtdeclarative=6.9.2=h88b4c33_1
+  - qtsvg=6.9.2=h30ace32_1
+  - qttools=6.9.2=h7e7b719_1
+  - qtwebchannel=6.9.2=heb02b0b_1
+  - qtwebsockets=6.9.2=heb02b0b_1
   - requests=2.32.5=py312haa95532_0
   - seaborn=0.13.2=py312haa95532_3
   - setuptools=80.9.0=py312haa95532_0
+  - sip=6.12.0=py312h706e071_0
   - six=1.17.0=py312haa95532_0
   - soupsieve=2.5=py312haa95532_0
+  - sqlalchemy=2.0.43=py312hda9a48d_0
   - sqlite=3.50.2=hda9a48d_1
   - stack_data=0.6.3=py312haa95532_0
   - tbb=2022.0.0=h214f63a_0
@@ -111,5 +135,7 @@ dependencies:
   - zlib=1.3.1=h02ab6af_0
   - zstd=1.5.7=h56299aa_0
   - pip:
+      - adjusttext==1.3.0
       - curl-cffi==0.13.0
+      - scipy==1.16.3
 prefix: C:\Users\anuku\anaconda3\envs\basketball-analytics
