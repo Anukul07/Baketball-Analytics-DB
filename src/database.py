@@ -55,23 +55,18 @@ def init_database():
             conn.close()
             print("Database connection closed.")
 
-# ... (at the end of src/database.py) ...
-
 def get_or_create_team(conn, team_name, team_abbr, is_playoff=False):
     """
     Finds a team by abbreviation. If it doesn't exist, creates it.
     Returns the team's primary key (team_id).
     """
     with conn.cursor() as cursor:
-        # Check if team exists
         cursor.execute("SELECT team_id FROM teams WHERE team_abbreviation = %s", (team_abbr,))
         result = cursor.fetchone()
-        
+
         if result:
-            # Team exists, return its ID
             return result[0]
         else:
-            # Team doesn't exist, create it
             print(f"    Adding new team to DB: {team_name}")
             cursor.execute(
                 """
@@ -82,7 +77,7 @@ def get_or_create_team(conn, team_name, team_abbr, is_playoff=False):
                 (team_name, team_abbr, is_playoff)
             )
             team_id = cursor.fetchone()[0]
-            conn.commit() # Commit the new team
+            conn.commit() 
             return team_id
 
 def get_or_create_player(conn, player_name, position, team_id):
@@ -91,15 +86,12 @@ def get_or_create_player(conn, player_name, position, team_id):
     Returns the player's primary key (player_id).
     """
     with conn.cursor() as cursor:
-        # Check if player exists on this team
         cursor.execute("SELECT player_id FROM players WHERE player_name = %s AND team_id = %s", (player_name, team_id))
         result = cursor.fetchone()
         
         if result:
-            # Player exists, return their ID
             return result[0]
         else:
-            # Player doesn't exist, create them
             print(f"      Adding new player to DB: {player_name}")
             cursor.execute(
                 """
@@ -110,10 +102,8 @@ def get_or_create_player(conn, player_name, position, team_id):
                 (player_name, position, team_id)
             )
             player_id = cursor.fetchone()[0]
-            conn.commit() # Commit the new player
+            conn.commit()
             return player_id
-        
-# ... (at the end of src/database.py, after get_or_create_player) ...
 
 def add_regular_season_stats(conn, player_id, season_year, stats_dict):
     """
@@ -139,7 +129,7 @@ def add_regular_season_stats(conn, player_id, season_year, stats_dict):
                 )
             )
         except Exception as e:
-            print(f"    Error inserting reg stats for player_id {player_id}: {e}")
+            print(f"Error inserting reg stats for player_id {player_id}: {e}")
             conn.rollback()
 
 
