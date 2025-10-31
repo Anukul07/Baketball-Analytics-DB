@@ -9,16 +9,13 @@ class StatsScraper:
     """
     def __init__(self, base_url="https://www.basketball-reference.com"):
         self.base_url = base_url
-        self.session = Session(impersonate="chrome110")
+        self.session = Session(impersonate="chrome")
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Referer': 'https://www.google.com/'
+            'User-Agent': 'NBA-Stats-Pipeline-Project (random@gmail.com)'
         })
 
     def _fetch_page(self, url):
-        """(Private) Fetches HTML with error handling and a polite delay."""
+        """Fetches HTML with error handling and a polite delay."""
         try:
             time.sleep(1) 
             response = self.session.get(url, timeout=10)
@@ -31,7 +28,6 @@ class StatsScraper:
     def get_playoff_teams(self, season_year=2025):
         """
         Scrapes Level 1: The main NBA standings page.
-        (This function is correct and finds visible tables)
         """
         print(f"Scraping Standings page for {season_year} playoff teams...")
         standings_url = f"{self.base_url}/leagues/NBA_{season_year}.html"
@@ -74,23 +70,20 @@ class StatsScraper:
         print(f"Found {len(playoff_teams)} playoff teams.")
         return playoff_teams
     
-    # --- THIS FUNCTION WAS CORRECT (BUT HAD A TYPO I'VE FIXED) ---
     def get_player_links(self, team_roster_url):
         """
         Scrapes Level 2: A team's roster page.
         """
-        print(f"  Scraping Roster page: {team_roster_url}")
+        print(f"Scraping Roster page: {team_roster_url}")
         html = self._fetch_page(team_roster_url)
         if not html:
             return
 
         soup = BeautifulSoup(html, 'html.parser')
-        
-        # --- Do a direct find for the table ---
         table = soup.find('table', id='roster')
         
         if not table:
-            print(f"    Could not find roster table on page.")
+            print(f"Could not find roster table on page.")
             return
 
         for row in table.find('tbody').find_all('tr'):
@@ -99,8 +92,6 @@ class StatsScraper:
                 continue
             
             player_link = player_cell.find('a')
-            
-            # --- THE FIX WAS HERE: 'pos' is lowercase in the HTML ---
             position_cell = row.find('td', {'data-stat': 'pos'}) 
             
             if player_link and position_cell:
@@ -109,32 +100,28 @@ class StatsScraper:
                     'url': self.base_url + player_link['href'],
                     'position': position_cell.text
                 }
-                yield player_data # Use 'yield' to return all players
+                yield player_data 
 
-    # --- ADD THIS NEW HELPER FUNCTION ---
     def _parse_stats_table(self, table_soup):
         """
-        (Private) Helper to parse a "Per Game" or "Playoffs Per Game" table.
+        Helper to parse a "Per Game" or "Playoffs Per Game" table.
         Returns a dictionary where:
         key = player_name
         value = {stats_dictionary}
         """
         player_stats_map = {}
         if not table_soup:
-            return player_stats_map # Return empty map if no table (e.g., no playoffs)
+            return player_stats_map
 
         for row in table_soup.find('tbody').find_all('tr'):
             player_cell = row.find('td', {'data-stat': 'name_display'})
-            # We skip rows that aren't player rows
             if not player_cell or not player_cell.find('a'):
                 continue 
             
             player_name = player_cell.text.strip()
             
-            # Helper to safely find and convert stats
             def get_stat(stat_name):
                 cell = row.find('td', {'data-stat': stat_name})
-                # Use 'or 0' to handle empty strings (like for a player with 0 blocks)
                 return float(cell.text or 0) if cell else 0.0
 
             stats = {
@@ -149,7 +136,6 @@ class StatsScraper:
             
         return player_stats_map
 
-    # --- ADD THIS NEW MAIN SCRAPING FUNCTION ---
     def scrape_team_stats(self, team_page_url):
         """
         Scrapes Level 3: The stats tables from the team page.
@@ -157,20 +143,14 @@ class StatsScraper:
         Returns:
         (reg_stats_map, playoff_stats_map)
         """
-        print(f"  Scraping Stats tables from: {team_page_url}")
+        print(f"Scraping Stats tables from: {team_page_url}")
         html = self._fetch_page(team_page_url)
         if not html:
-            return {}, {} # Return two empty dicts
+            return {}, {}
 
         soup = BeautifulSoup(html, 'html.parser')
-
-        # --- 1. Get Regular Season Stats ---
-        # We find the table that is *not* commented out
         reg_table_soup = soup.find('table', id='per_game_stats')
         reg_stats_map = self._parse_stats_table(reg_table_soup)
-
-        # --- 2. Get Playoff Stats ---
-        # The playoff table is ALSO visible, just in a different div
         playoff_table_soup = soup.find('table', id='per_game_stats_post')
         playoff_stats_map = self._parse_stats_table(playoff_table_soup)
         
