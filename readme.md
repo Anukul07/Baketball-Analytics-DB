@@ -25,8 +25,10 @@ The final visualization plots every team's top player by their Offensive score (
 
 
 Also, to find the top offensive player and defensive player from each team, CTEs and Window functions (Rank() OVER (Partition BY...)) were used. CTEs were used in numerous scenarios too.
+<img width="1197" height="884" alt="image" src="https://github.com/user-attachments/assets/32f37bc6-14c5-4333-9744-6018c2ea8d87" />
+<img width="1197" height="884" alt="image" src="https://github.com/user-attachments/assets/aca8999a-3ebc-49fc-a8dd-699be83dda3c" />
 
-The findings or charts are at visualizations folder
+More findings or charts are at visualizations folder
 
 ---
 
